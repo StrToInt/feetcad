@@ -150,9 +150,10 @@ class FEETCAD(pyglet.window.Window):
 
         self.__shapes_hud = []
         self.__grid_visible = False
-        self.grid_width = 1
-        self.grid_step = 10
+        self.grid_width = 0.1
+        self.grid_step = 1
         self.grid_steps = 100
+        self.grid_min_cell_width = 10
 
         self.generate_grid()
 
@@ -184,22 +185,36 @@ class FEETCAD(pyglet.window.Window):
     def recalculate_grid(self):
         newx = self.camera.x
         newy = self.camera.y
-        middlex = (self.grid_steps*self.grid_step)/2
-        middley = (self.grid_steps*self.grid_step)/2
+        cell_width = self.grid_step*self.camera.zoom
+        print('cell width',cell_width)
+        #normal: between 10 and 100
+        zoom_factor = 1
+        cnt = 1
+
+        while cell_width < self.grid_min_cell_width:
+            zoom_factor = cnt*5
+            cnt+=1
+            cell_width = self.grid_step*self.camera.zoom*zoom_factor
+
+        cell_width = self.grid_step*self.camera.zoom*zoom_factor
+        print('new cell width',cell_width)
+
+        middlex = (self.grid_steps*self.grid_step*zoom_factor)/2
+        middley = (self.grid_steps*self.grid_step*zoom_factor)/2
+
 
         x = 0
         for line in self.__grid_shapes_big[1]:
-            line.x = x*self.grid_step-middlex+self.camera.x-self.camera.x%self.grid_step
+            line.x = x*self.grid_step*zoom_factor-middlex+self.camera.x-self.camera.x%(zoom_factor*self.grid_step)
             x+=1
 
         y = 0
         for line in self.__grid_shapes_big[0]:
-            line.y = y*self.grid_step-middley+self.camera.x-self.camera.x%self.grid_step
+            line.y = y*self.grid_step*zoom_factor-middley+self.camera.y-self.camera.y%(zoom_factor*self.grid_step)
             y+=1
 
         print('grid_recalculate after','newx newy',newx,newy)
         #0.8 and 8
-        print('cell width',self.grid_step*self.camera.zoom)
 
 
 
