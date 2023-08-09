@@ -150,10 +150,16 @@ class FEETCAD(pyglet.window.Window):
 
         self.__shapes_hud = []
         self.__grid_visible = False
-        self.grid_width = 0.1
+        self.__last_grid_state = True
+        self.grid_width = 2
         self.grid_step = 1
-        self.grid_steps = 100
-        self.grid_min_cell_width = 10
+        self.grid_steps = 70
+        self.grid_min_cell_width = 20
+        self.grid_zoom_step = 10
+        self.grid_primary_color = color=(255,255,255,100)
+        self.grid_middle_color = color=(255,255,255,50)
+        self.grid_secondary_color = color=(255,255,255,25)
+
 
         self.generate_grid()
 
@@ -172,10 +178,10 @@ class FEETCAD(pyglet.window.Window):
         vert = []
         horz = []
         for x in range(0,self.grid_steps):
-            grid_line = shapes.Line(x*self.grid_step, -20000, x*self.grid_step, 20000, self.grid_width, color=(255,255,255,50), batch = self.batch, group = self.camera)
+            grid_line = shapes.Rectangle(x*self.grid_step, -20000, self.grid_width, 40000,  color=(255,255,255,50), batch = self.batch, group = self.camera)
             vert.append(grid_line)
         for y in range(0,self.grid_steps):
-            grid_line = shapes.Line(-20000, y*self.grid_step, 20000, y*self.grid_step, self.grid_width, color=(255,255,255,50), batch = self.batch, group = self.camera)
+            grid_line = shapes.Rectangle(-20000, y*self.grid_step, 40000, self.grid_width,  color=(255,255,255,50), batch = self.batch, group = self.camera)
             horz.append(grid_line)
 
         self.__grid_shapes_big.append(horz)
@@ -183,21 +189,25 @@ class FEETCAD(pyglet.window.Window):
         print(self.__grid_shapes_big)
 
     def recalculate_grid(self):
+        if not self.__last_grid_state and not self.__grid_visible:
+            return
+
         newx = self.camera.x
         newy = self.camera.y
+
         cell_width = self.grid_step*self.camera.zoom
-        print('cell width',cell_width)
+        #print('cell width',cell_width)
         #normal: between 10 and 100
         zoom_factor = 1
         cnt = 1
 
         while cell_width < self.grid_min_cell_width:
-            zoom_factor = cnt*5
-            cnt+=1
+            zoom_factor = zoom_factor*self.grid_zoom_step
             cell_width = self.grid_step*self.camera.zoom*zoom_factor
 
         cell_width = self.grid_step*self.camera.zoom*zoom_factor
-        print('new cell width',cell_width)
+        #print('zoom_factor',zoom_factor)
+        #print('new cell width',cell_width)
 
         middlex = (self.grid_steps*self.grid_step*zoom_factor)/2
         middley = (self.grid_steps*self.grid_step*zoom_factor)/2
@@ -206,14 +216,42 @@ class FEETCAD(pyglet.window.Window):
         x = 0
         for line in self.__grid_shapes_big[1]:
             line.x = x*self.grid_step*zoom_factor-middlex+self.camera.x-self.camera.x%(zoom_factor*self.grid_step)
+
+            if line.x % (self.grid_zoom_step*zoom_factor) == 0:
+                line.color = self.grid_primary_color
+            elif line.x % (self.grid_zoom_step/2*zoom_factor) == 0:
+                line.color = self.grid_middle_color
+            else:
+                line.color = self.grid_secondary_color
+
+            line.width = self.grid_width/self.camera.zoom
+            line.x-=line.width/2
             x+=1
+
+            if not self.__grid_visible:
+                line.x+=10000
 
         y = 0
         for line in self.__grid_shapes_big[0]:
             line.y = y*self.grid_step*zoom_factor-middley+self.camera.y-self.camera.y%(zoom_factor*self.grid_step)
+
+            if line.y % (self.grid_zoom_step*zoom_factor) == 0:
+                line.color = self.grid_primary_color
+            elif line.y % (self.grid_zoom_step/2*zoom_factor) == 0:
+                line.color = self.grid_middle_color
+            else:
+                line.color = self.grid_secondary_color
+
+            line.height = self.grid_width/self.camera.zoom
+            line.y-=line.height/2
             y+=1
 
-        print('grid_recalculate after','newx newy',newx,newy)
+            if not self.__grid_visible:
+                line.y+=10000
+
+        self.__last_grid_state = self.__grid_visible
+
+        #print('grid_recalculate after','newx newy',newx,newy)
         #0.8 and 8
 
 
@@ -221,10 +259,7 @@ class FEETCAD(pyglet.window.Window):
 
     def toggle_grid(self):
         self.__grid_visible = not self.__grid_visible
-        if self.__grid_visible:
-            self.__grid_camera.y = 0
-        else:
-            self.__grid_camera.y = 10000
+        self.recalculate_grid()
         print('grid',self.__grid_visible)
 
     def redraw(self):
@@ -271,7 +306,7 @@ class FEETCAD(pyglet.window.Window):
             self.camera.x -= dx/self.camera.zoom
             self.camera.y -= dy/self.camera.zoom
             self.recalculate_grid()
-            print('drag self.camera.zoom,self.camera.x,self.camera.y',self.camera.zoom,self.camera.x,self.camera.y)
+            #print('drag self.camera.zoom,self.camera.x,self.camera.y',self.camera.zoom,self.camera.x,self.camera.y)
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == pyglet.window.mouse.MIDDLE:
