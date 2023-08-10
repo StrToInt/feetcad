@@ -109,6 +109,17 @@ class LIBRARY:
             f.write(json.dumps(self.__json_data, indent=4))
 
 
+class SCHEME_DRAW_ITEM:
+    def __init__(self,shape=None):
+        self.shapes = [shape] if shape != None else []
+
+    def addItem(self,item):
+        self.shapes.append(item)
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+            sort_keys=True, indent=4)
+
 class SCHEME:
 
     def __init__(self):
@@ -124,9 +135,9 @@ class SCHEME:
     def saveScheme(self,fileName = ""):
         if fileName != "":
             self.__fileName = fileName
-
+        #print(json.dumps(self.jsonData, indent=4,default=bool))
         with open(self.__fileName, 'w') as f:
-            f.write(json.dumps(self.jsonData, indent=4))
+            f.write(json.dumps(self.jsonData, indent=4, default=bool))
 
 class FEETCAD(pyglet.window.Window):
 
@@ -153,7 +164,7 @@ class FEETCAD(pyglet.window.Window):
         self.__last_grid_state = True
         self.grid_width = 2
         self.grid_step = 1
-        self.grid_steps = 40
+        self.grid_steps = 60
         self.grid_min_cell_width = 20
         self.grid_zoom_step = 10
         self.grid_zero_color = color=(255,255,255,150)
@@ -390,6 +401,7 @@ class FEETCAD(pyglet.window.Window):
                 for component in self.scheme.jsonData['components']:
                     x = component['x']
                     y = component['y']
+                    component['temp_shapes'] = SCHEME_DRAW_ITEM()
                     if 'shapes' in component:
                         for shape in component['shapes']:
                             if shape['type'] == "line":
@@ -405,7 +417,8 @@ class FEETCAD(pyglet.window.Window):
                                                             color=(shape['color'][0], shape['color'][1], shape['color'][2],shape['color'][3]),\
                                                             batch=self.batch,\
                                                             group=self.camera)
-                                self.__shapes.append(line)
+                                #self.__shapes.append(line)
+                                component['temp_shapes'].addItem(line)
 
                             if shape['type'] == "rectangle":
                                 x1 = shape['x1']+x
@@ -421,29 +434,36 @@ class FEETCAD(pyglet.window.Window):
                                                     color=color,\
                                                     batch=self.batch,\
                                                     group=self.camera)
-                                self.__shapes.append(line)
+                                #self.__shapes.append(line)
+                                component['temp_shapes'].addItem(line)
 
                                 line = shapes.Line( x2,y1,x2,y2,\
                                                     width=shape['width'],\
                                                     color=color,\
                                                     batch=self.batch,\
                                                     group=self.camera)
-                                self.__shapes.append(line)
+                                #self.__shapes.append(line)
+                                component['temp_shapes'].addItem(line)
 
                                 line = shapes.Line( x1,y1,x1,y2,\
                                                     width=shape['width'],\
                                                     color=color,\
                                                     batch=self.batch,\
                                                     group=self.camera)
-                                self.__shapes.append(line)
+                                #self.__shapes.append(line)
+                                component['temp_shapes'].addItem(line)
 
                                 line = shapes.Line( x1,y2,x2,y2,\
                                                     width=shape['width'],\
                                                     color=color,\
                                                     batch=self.batch,\
                                                     group=self.camera)
-                                self.__shapes.append(line)
+                                #self.__shapes.append(line)
+                                component['temp_shapes'].addItem(line)
+
                 print( 'minx,maxx,miny,maxy:', self.minx, self.maxx, self.miny, self.maxy)
+
+
 
 if __name__ == "__main__":
     cad = FEETCAD()
@@ -454,5 +474,5 @@ if __name__ == "__main__":
     cad.reset_view()
     #cad.initialize_hud()
     cad.toggle_grid()
-    #cad.scheme.saveScheme('test.jschem')
+    cad.scheme.saveScheme('test.jschem')
     pyglet.app.run()
