@@ -153,12 +153,15 @@ class FEETCAD(pyglet.window.Window):
         self.__last_grid_state = True
         self.grid_width = 2
         self.grid_step = 1
-        self.grid_steps = 70
+        self.grid_steps = 40
         self.grid_min_cell_width = 20
         self.grid_zoom_step = 10
+        self.grid_zero_color = color=(255,255,255,150)
         self.grid_primary_color = color=(255,255,255,100)
         self.grid_middle_color = color=(255,255,255,50)
         self.grid_secondary_color = color=(255,255,255,25)
+
+        self.zoom_step = 5
 
 
         self.generate_grid()
@@ -178,10 +181,10 @@ class FEETCAD(pyglet.window.Window):
         vert = []
         horz = []
         for x in range(0,self.grid_steps):
-            grid_line = shapes.Rectangle(x*self.grid_step, -20000, self.grid_width, 40000,  color=(255,255,255,50), batch = self.batch, group = self.camera)
+            grid_line = shapes.Rectangle(x*self.grid_step, -200000, self.grid_width, 400000,  color=(255,255,255,50), batch = self.batch, group = self.camera)
             vert.append(grid_line)
         for y in range(0,self.grid_steps):
-            grid_line = shapes.Rectangle(-20000, y*self.grid_step, 40000, self.grid_width,  color=(255,255,255,50), batch = self.batch, group = self.camera)
+            grid_line = shapes.Rectangle(-200000, y*self.grid_step, 400000, self.grid_width,  color=(255,255,255,50), batch = self.batch, group = self.camera)
             horz.append(grid_line)
 
         self.__grid_shapes_big.append(horz)
@@ -217,7 +220,9 @@ class FEETCAD(pyglet.window.Window):
         for line in self.__grid_shapes_big[1]:
             line.x = x*self.grid_step*zoom_factor-middlex+self.camera.x-self.camera.x%(zoom_factor*self.grid_step)
 
-            if line.x % (self.grid_zoom_step*zoom_factor) == 0:
+            if line.x  == 0:
+                line.color = self.grid_zero_color
+            elif line.x % (self.grid_zoom_step*zoom_factor) == 0:
                 line.color = self.grid_primary_color
             elif line.x % (self.grid_zoom_step/2*zoom_factor) == 0:
                 line.color = self.grid_middle_color
@@ -229,13 +234,15 @@ class FEETCAD(pyglet.window.Window):
             x+=1
 
             if not self.__grid_visible:
-                line.x+=10000
+                line.x+=1000000
 
         y = 0
         for line in self.__grid_shapes_big[0]:
             line.y = y*self.grid_step*zoom_factor-middley+self.camera.y-self.camera.y%(zoom_factor*self.grid_step)
 
-            if line.y % (self.grid_zoom_step*zoom_factor) == 0:
+            if line.x  == 0:
+                line.color = self.grid_zero_color
+            elif line.y % (self.grid_zoom_step*zoom_factor) == 0:
                 line.color = self.grid_primary_color
             elif line.y % (self.grid_zoom_step/2*zoom_factor) == 0:
                 line.color = self.grid_middle_color
@@ -247,7 +254,7 @@ class FEETCAD(pyglet.window.Window):
             y+=1
 
             if not self.__grid_visible:
-                line.y+=10000
+                line.y+=1000000
 
         self.__last_grid_state = self.__grid_visible
 
@@ -288,15 +295,35 @@ class FEETCAD(pyglet.window.Window):
 
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        dx = 0
+        dx = (self.width/2-x)
+        dy = (self.height/2-y)
+        print('dx,dy',dx,dy)
+
         if scroll_y > 0:
             #dx = (self.width/2-x)/self.camera.zoom)
-            self.camera.zoom+=self.camera.zoom/5
-        else:
-            self.camera.zoom-=self.camera.zoom/5
+            newzoom = self.camera.zoom + self.camera.zoom/self.zoom_step
+            self.camera.zoom=newzoom
 
-        self.camera.x -= dx
+            dx = (dx/newzoom)/self.zoom_step
+            dy = (dy/newzoom)/self.zoom_step
+            #print('dx',dx)
+            self.camera.x -= dx
+            self.camera.y -= dy
+
+        else:
+            #dx = (self.width/2-x)/self.camera.zoom)
+            newzoom = self.camera.zoom - self.camera.zoom/self.zoom_step
+            self.camera.zoom=newzoom
+
+            dx = (dx/newzoom)/self.zoom_step
+            dy = (dy/newzoom)/self.zoom_step
+            #print('dx',dx)
+            self.camera.x += dx
+            self.camera.y += dy
+
+
         self.recalculate_grid()
+
         #self.camera.y -= dy/self.camera.zoom
         print('scroll self.camera.zoom,scroll_y',self.camera.zoom,scroll_y)
 
@@ -306,7 +333,7 @@ class FEETCAD(pyglet.window.Window):
             self.camera.x -= dx/self.camera.zoom
             self.camera.y -= dy/self.camera.zoom
             self.recalculate_grid()
-            #print('drag self.camera.zoom,self.camera.x,self.camera.y',self.camera.zoom,self.camera.x,self.camera.y)
+            print('drag self.camera.zoom,self.camera.x,self.camera.y',self.camera.zoom,self.camera.x,self.camera.y)
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == pyglet.window.mouse.MIDDLE:
@@ -426,6 +453,6 @@ if __name__ == "__main__":
     cad.loadShapesFromJson()
     cad.reset_view()
     #cad.initialize_hud()
-    #cad.toggle_grid()
+    cad.toggle_grid()
     #cad.scheme.saveScheme('test.jschem')
     pyglet.app.run()
