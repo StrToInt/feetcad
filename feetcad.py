@@ -116,9 +116,8 @@ class SCHEME_DRAW_ITEM:
     def addItem(self,item):
         self.shapes.append(item)
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
+    def clear(self):
+        self.shapes = []
 
 class SCHEME:
 
@@ -153,7 +152,6 @@ class FEETCAD(pyglet.window.Window):
         self.batch = pyglet.graphics.Batch()
         self.camera = CenteredCameraGroup(self,0,0,1)
         self.__clickTime = time.time()
-        self.__shapes = []
 
         self.__grid_shapes_big = []
         self.__grid_shapes_small = []
@@ -171,6 +169,8 @@ class FEETCAD(pyglet.window.Window):
         self.grid_primary_color = color=(255,255,255,100)
         self.grid_middle_color = color=(255,255,255,50)
         self.grid_secondary_color = color=(255,255,255,25)
+
+        self.under_mouse_shapes = []
 
         self.zoom_step = 5
 
@@ -304,6 +304,8 @@ class FEETCAD(pyglet.window.Window):
         self.camera.y = self.miny+(self.maxy-self.miny)/2
         self.recalculate_grid()
 
+    def on_mouse_motion(x, y, dx, dy):
+        pass
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         dx = (self.width/2-x)
