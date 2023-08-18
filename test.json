@@ -1,0 +1,681 @@
+{
+    "name": "Test name",
+    "components": [
+        {
+            "name": "R1",
+            "x": 0,
+            "y": 0,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+			"labels":[
+				{
+					"field":"name",
+					"font": {
+						"name":"GOST TYPE A",
+						"size":7,
+						"bold":false,
+						"itallic":false,
+						"underline":false,
+						"strikeout":false
+					},
+					"x":-10,
+					"y":5,
+					"text":"fuck off"
+				},
+				{
+					"field":"R",
+					"font": {
+						"name":"GOST TYPE A",
+						"size":5,
+						"bold":false,
+						"itallic":false,
+						"underline":false,
+						"strikeout":false
+					},
+					"x":-10,
+					"y":-2,
+					"text":"1.3кОм"
+				}
+			],
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 2,
+                    "y1": -15,
+                    "x2": -2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": -2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R2",
+            "x": 3,
+            "y": 0,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+			"labels":[
+				{
+					"field":"name",
+					"font": {
+						"name":"GOST TYPE A",
+						"size":7,
+						"bold":false,
+						"itallic":false,
+						"underline":false,
+						"strikeout":false
+					},
+					"x":-10,
+					"y":5,
+					"text":"fuck off"
+				},
+				{
+					"field":"R",
+					"font": {
+						"name":"GOST TYPE A",
+						"size":5,
+						"bold":false,
+						"itallic":false,
+						"underline":false,
+						"strikeout":false
+					},
+					"x":-10,
+					"y":-2,
+					"text":"1.3кОм"
+				}
+			],
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R3",
+            "x": 20,
+            "y": 0,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+			"labels":[
+				{
+					"field":"name",
+					"font": {
+						"name":"GOST TYPE A",
+						"size":7,
+						"bold":false,
+						"itallic":false,
+						"underline":false,
+						"strikeout":false
+					},
+					"x":-10,
+					"y":5,
+					"text":"fuck off"
+				},
+				{
+					"field":"R",
+					"font": {
+						"name":"GOST TYPE A",
+						"size":5,
+						"bold":false,
+						"itallic":false,
+						"underline":false,
+						"strikeout":false
+					},
+					"x":-10,
+					"y":-2,
+					"text":"1.3кОм"
+				}
+			],
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R4",
+            "x": 30,
+            "y": 0,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R5",
+            "x": 40,
+            "y": 0,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R6",
+            "x": -50,
+            "y": 50,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R7",
+            "x": -50,
+            "y": -50,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        },
+        {
+            "name": "R8",
+            "x": 160,
+            "y": 30,
+            "customGroup": "res",
+            "referenceTo": null,
+            "nameMask": "R#",
+            "shapes": [
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": 0,
+                    "x2": 0,
+                    "y2": -5,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "line",
+                    "x1": 0,
+                    "y1": -15,
+                    "x2": 0,
+                    "y2": -20,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                },
+                {
+                    "type": "rectangle",
+                    "x1": -2,
+                    "y1": -5,
+                    "x2": 2,
+                    "y2": -15,
+                    "width": 0.3,
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "pins": [
+                {
+                    "name": "1",
+                    "x": 0,
+                    "y": 0,
+                    "visible": "True",
+                    "shapeType": "dot",
+                    "color": [
+                        255,
+                        255,
+                        255,
+                        255
+                    ]
+                }
+            ],
+            "temp_shapes": true
+        }
+    ]
+}
