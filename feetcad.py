@@ -139,9 +139,80 @@ class SCHEME:
         with open(self.__fileName, 'w') as f:
             f.write(json.dumps(self.jsonData, indent=4, default=bool))
 
+class HUD():
+
+    class BUTTON():
+        def __init__(self, owner_window, image, batch, camera, function, x, y):
+            self.owner_window = owner_window
+            self.batch = batch
+            self.camera = camera
+            self.function = function
+
+            #pyglet.resource.path = ['buttons']
+            #pyglet.resource.reindex()
+
+            self.image = pyglet.resource.image(image)
+            self.sprite = pyglet.sprite.Sprite(self.image,
+                                  x=x,
+                                  y=y,
+                                  batch = self.batch,
+                                  group = self.camera)
+            self.sprite.opacity = 128
+            self.sprite.anchor_x = self.sprite.image.width/2
+            self.sprite.visible = False
+
+
+
+
+    def __init__(self, owner_window, batch, camera):
+        self.buttons = []
+        self.batch = batch
+        self.camera = camera
+        self.owner_window = owner_window
+        self.width = 0
+        self.height = 0
+
+    def add_button(self, image, function):
+        x = 0
+        for button in self.buttons:
+            x+=button.image.width
+        button = HUD.BUTTON(self.owner_window, image, self.batch, self.camera, function, x, 0)
+
+        self.width+=button.image.width
+        if self.height < button.image.height:
+            self.height = button.image.height
+
+        self.buttons.append(button)
+
+    def recalculate_hud(self, window_width, window_height, mouse_x, mouse_y):
+        def in_rect(x0,y0,x1,y1,x2,y2):
+            return x0>=x1 and x0<=x2 and y0>=y1 and y0<=y2
+
+        x0 = -(window_width - self.width - 40) * mouse_x / window_width -20
+
+        x = 0
+        for button in self.buttons:
+            button.sprite.x = x - x0
+            #button.sprite.update()
+            if in_rect(mouse_x, mouse_y, button.sprite.x,button.sprite.y,button.sprite.x+button.image.width,button.sprite.y+button.image.height):
+                button.sprite.scale = 1.1
+                button.sprite.opacity = 255
+                button.sprite.color = (255,255,255)
+            else:
+                button.sprite.scale = 1
+                button.sprite.opacity = 128
+                button.sprite.color = (200,200,200)
+
+            x+=button.sprite.width
+
+
+    def set_visible(self,visible):
+        for button in self.buttons:
+            button.sprite.visible = visible
+
 class FEETCAD(pyglet.window.Window):
 
-    def __init__(self, macro_edit = False, macro_edit_window = None):
+    def __init__(self):
         config = pyglet.gl.Config()
         config.sample_buffers = 1
         config.samples = 1
@@ -158,7 +229,6 @@ class FEETCAD(pyglet.window.Window):
         self.__grid_shapes_big = []
         self.__grid_shapes_small = []
 
-        self.__shapes_hud = []
         self.__grid_visible = False
         self.__last_grid_state = True
 
@@ -184,25 +254,44 @@ class FEETCAD(pyglet.window.Window):
 
         self.hilighted_components = []
 
+        self.in_macro_edit = None
+
         self.miny,self.minx,self.maxy,self.maxx = (100,100,-100,-100)
 
         self.toggle_grid()
 
         self.clearScheme()
 
-        self.macro_edit = macro_edit
+        self.borders_color = (171,0,247,150)
+        self.border_dots_width = 0.5 * self.magnifier
 
-        if macro_edit:
-            self.set_visible(False)
 
-        self.macro_edit_window = macro_edit_window
+        self.hud_macro = HUD(self, self.batch, self.camera_hud)
+        self.hud_macro.add_button('buttons/macro_line.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_text.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_pin.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_rectangle.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_circle.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_from_file.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_to_file.png',self.do_macro_create_line())
+        self.hud_macro.add_button('buttons/macro_from_db.png',self.do_macro_create_line())
+        for j in range(8):
+
+            self.hud_macro.add_button('buttons/macro_line.png',self.do_macro_create_line())
+
+
+
+        self.fps = pyglet.window.FPSDisplay(window=self)
+
+    def do_macro_create_line(self):
+        pass
+
 
 
     def check_for_macro_edit(self, enter_to_edit = True):
         if enter_to_edit:
             if len(self.hilighted_components) == 1:
                 self.in_macro_edit = self.hilighted_components[0]
-                in_macro = FEETCAD()
 
                 if 'components' in self.scheme.jsonData:
                     for component in self.scheme.jsonData['components']:
@@ -210,29 +299,21 @@ class FEETCAD(pyglet.window.Window):
                         for shape in component['temp_shapes'].shapes:
                             color = shape.color
                             if len(color) == 4:
-                                shape.color = (color[0],color[1],color[2],50)
+                                shape.color = (color[0],color[1],color[2],20)
 
-                self.loadShapesFromJson(self.hilighted_components[0])
+                self.hud_macro.set_visible(True)
+                self.loadShapesFromJson(self.hilighted_components[0],macro_mode = True)
                 print("self.in_macro_edit['x'],self.in_macro_edit[y]",self.in_macro_edit['x'],self.in_macro_edit['y'])
         else:
             print('exiting macro edit')
             self.in_macro_edit = None
             self.loadShapesFromJson()
+            self.hud_macro.set_visible(False)
 
         for shape in self.in_macro_edit_shapes:
             shape.visible = self.in_macro_edit != None
 
         self.recalculate_grid()
-
-    def initialize_hud(self):
-        __shapes_hud = []
-        line = shapes.Line(         0, 0,\
-                                    100,100,\
-                                    5,\
-                                    color=(255, 255,255,255),\
-                                    batch=self.batch,\
-                                    group=self.camera_hud)
-        self.__shapes_hud.append(line)
 
     def generate_grid(self):
         vert = []
@@ -270,8 +351,12 @@ class FEETCAD(pyglet.window.Window):
         #print('new cell width',cell_width)
 
         middlex = (self.grid_steps*self.grid_step*zoom_factor)/2
+        if self.in_macro_edit != None:
+            middlex+=self.in_macro_edit['x']*self.magnifier
 
         middley = (self.grid_steps*self.grid_step*zoom_factor)/2
+        if self.in_macro_edit != None:
+            middley+=self.in_macro_edit['y']*self.magnifier
 
         #vertical lines
         x = 0
@@ -289,6 +374,8 @@ class FEETCAD(pyglet.window.Window):
 
             line.width = self.grid_width/self.camera.zoom
             line.x-=line.width/2
+            if self.in_macro_edit != None:
+                line.x+=self.in_macro_edit['x']*self.magnifier
 
 
             x+=1
@@ -312,6 +399,8 @@ class FEETCAD(pyglet.window.Window):
 
             line.height = self.grid_width/self.camera.zoom
             line.y-=line.height/2
+            if self.in_macro_edit != None:
+                line.y+=self.in_macro_edit['y']*self.magnifier
 
             y+=1
 
@@ -344,6 +433,9 @@ class FEETCAD(pyglet.window.Window):
         maxy = self.maxy
         miny = self.miny
 
+        if self.in_macro_edit != None:
+            minx,miny,maxx,maxy = self.loadShapesFromJson(self.in_macro_edit, onlyBounds = True)
+
         scheme_width = maxx - minx+20
         scheme_height = maxy - miny+20
         max_dim_scheme, max_dim_window = (0, 0)
@@ -366,20 +458,23 @@ class FEETCAD(pyglet.window.Window):
         self.cursor.y = (-self.height/2+y)/self.camera.zoom+self.camera.y
         #print("mouse on canvas: x,y:",self.cursor.x,self.cursor.y)
         #print('len(self.hilighted_components)',len(self.hilighted_components));
-        selected = self.check_mouse_onshape(self.cursor.x, self.cursor.y)
-        #print(selected)
+        if self.in_macro_edit == None:
+            selected = self.check_mouse_onshape(self.cursor.x, self.cursor.y)
+            #print(selected)
 
-        for component in self.hilighted_components:
-            #print('last',component['name'])
-            self.loadShapesFromJson(component)
+            for component in self.hilighted_components:
+                #print('last',component['name'])
+                self.loadShapesFromJson(component)
 
-        if len(selected) > 0:
-            for component in selected:
-                #print('new',selected)
-                for shape in component['temp_shapes'].shapes:
-                    shape.color = [255,0,0,255]
+            if len(selected) > 0:
+                for component in selected:
+                    #print('new',selected)
+                    for shape in component['temp_shapes'].shapes:
+                        shape.color = [255,0,0,255]
 
-        self.hilighted_components = selected
+            self.hilighted_components = selected
+        else:
+            self.hud_macro.recalculate_hud(self.width, self.height, x, y)
 
 
 
@@ -439,11 +534,34 @@ class FEETCAD(pyglet.window.Window):
             else:
                 self.__clickTime = time.time()
 
+    def recalculate_in_macro_label(self):
+        if len(self.in_macro_edit_shapes) >= 2:
+            self.in_macro_edit_shapes[0].x = self.width - 80
+            self.in_macro_edit_shapes[0].y = self.height - 20
+            self.in_macro_edit_shapes[1].x = self.width - 76
+            self.in_macro_edit_shapes[1].y = self.height - 18
+
+    def initialize_in_macro_label(self):
+        self.in_macro_edit_shapes = []
+        self.in_macro_edit_shapes.append(shapes.Rectangle(0, 100, 60, 14,  color=(255,255,255,250), batch = self.batch, group = self.camera_hud))
+        self.in_macro_edit_shapes.append(pyglet.text.Label('in macro',\
+                        font_name='Segoe UI',\
+                        bold="bold",\
+                        font_size=10,\
+                        color=(0,0,0,250),\
+                        x=0,\
+                        y=100,\
+                        batch=self.batch,
+                        group = self.camera_hud))
+        self.check_for_macro_edit(False)
+
     def on_draw(self):
         """Clear the screen and draw shapes"""
         #check macroedit mode
         self.clear()
+        self.recalculate_in_macro_label()
         self.batch.draw()
+        #self.fps.draw()
 
     def on_key_press(self, symbols, modifiers):
         if pyglet.window.key.MOD_SHIFT & modifiers and \
@@ -510,9 +628,18 @@ class FEETCAD(pyglet.window.Window):
         return selected
 
 
-    def loadShapesFromJson(self, targetComponent = None, onlyBounds = False):
+    def loadShapesFromJson(self, targetComponent = None, onlyBounds = False, macro_mode = False):
         if self.scheme.jsonData != None:
             self.__schemeBatch = pyglet.graphics.Batch()
+
+            def border_dot(x,y):
+                return shapes.Star( x, y, outer_radius = self.border_dots_width,
+                                    inner_radius = self.border_dots_width/3,
+                                    num_spikes = 10,
+                                    rotation = 120,
+                                    color = self.borders_color,
+                                    batch=self.batch,
+                                    group=self.camera)
 
             def copare_bounds(x1,x2,y1,y2):
                 #nonlocal maxx,minx,maxy,miny
@@ -527,7 +654,7 @@ class FEETCAD(pyglet.window.Window):
                 if y1 > self.maxy: self.maxy = y1
                 if y2 > self.maxy: self.maxy = y2
 
-            def loadShapesFromComponent(component, onlyBounds = False):
+            def loadShapesFromComponent(component, onlyBounds = False, macro_mode = False):
                 x0 = component['x']
                 y0 = component['y']
 
@@ -571,9 +698,17 @@ class FEETCAD(pyglet.window.Window):
                                                         color=(shape['color'][0], shape['color'][1], shape['color'][2],shape['color'][3]),\
                                                         batch=self.batch,\
                                                         group=self.camera)
-                            #self.__shapes.append(line)
+
                             if onlyBounds == False:
                                 component['temp_shapes'].addItem(line)
+
+                                if macro_mode:
+                                    component['temp_shapes'].addItem(border_dot(x1, y1))
+                                    component['temp_shapes'].addItem(border_dot(x2, y2))
+
+
+
+                            #self.__shapes.append(line)
 
                         if shape['type'] == "rectangle":
                             x1 = shape['x1']+x0
@@ -597,6 +732,12 @@ class FEETCAD(pyglet.window.Window):
 
                             if onlyBounds == False:
                                 component['temp_shapes'].addItem(rect)
+
+                                if macro_mode:
+                                    component['temp_shapes'].addItem(border_dot(x1, y1))
+                                    component['temp_shapes'].addItem(border_dot(x1, y2))
+                                    component['temp_shapes'].addItem(border_dot(x2, y1))
+                                    component['temp_shapes'].addItem(border_dot(x2, y2))
 
                 if 'labels' in component:
                     for label in component['labels']:
@@ -641,19 +782,15 @@ class FEETCAD(pyglet.window.Window):
                     for component in self.scheme.jsonData['components']:
                         loadShapesFromComponent(component)
             else:
-                if onlyBounds:
-                    return loadShapesFromComponent(targetComponent, True)
-                else:
-                    loadShapesFromComponent(targetComponent)
+                loadShapesFromComponent(targetComponent, onlyBounds = onlyBounds, macro_mode = macro_mode)
 
 
 
 if __name__ == "__main__":
-    macro_window = FEETCAD(macro_edit = True)
-    cad = FEETCAD(macro_edit_window = macro_window)
+    cad = FEETCAD()
     cad.scheme.loadScheme('test.json')
     cad.loadShapesFromJson()
     cad.reset_view()
-    cad.initialize_hud()
+    cad.initialize_in_macro_label()
     cad.scheme.saveScheme('test_out.jschem')
     pyglet.app.run()
